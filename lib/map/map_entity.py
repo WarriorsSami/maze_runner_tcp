@@ -16,6 +16,10 @@ def to_map_entity(value):
             raise ValueError(f'Invalid value: {value}')
 
 class MapEntity(Enum):
+    """
+    Enum for representing the possible values of a map cell (entity)
+    """
+
     EMPTY_CELL = '.',
     WALL = '#',
     PLAYER = 'J',

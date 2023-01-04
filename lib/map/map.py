@@ -14,6 +14,19 @@ def get_manhattan_distance(position1, position2):
 
 
 class Map:
+    """
+    Class for representing a Game Map
+
+    Attributes
+    ----------
+    map_file_path : str (the map template file path)
+    map_size : tuple (the map size)
+    entity_map : list (the map entity representation)
+    bfs_map : list (the BFS map used for marking the player's valid positions)
+    player_position : tuple (the player's position)
+    monster_position : tuple (the monster's position)
+    """
+
     def __init__(self, map_file_path):
         self.map_file_path = map_file_path
         self.map_size = (0, 0)
@@ -25,6 +38,9 @@ class Map:
 
         self.player_position = None
         self.monster_position = None
+
+    def get_player_details(self):
+        return self.player_position, self.map_size
 
     def read_map(self):
         with open(self.map_file_path, 'r') as file:
@@ -85,7 +101,7 @@ class Map:
             filter(
                 lambda _position:
                 self.bfs_map[_position[0]][_position[1]] > 0
-                and 0 < get_manhattan_distance(self.player_position, _position) <= 3
+                and get_manhattan_distance(self.player_position, _position) == 3
                 and self.entity_map[_position[0]][_position[1]] != MapEntity.WALL
                 and self.entity_map[_position[0]][_position[1]] != MapEntity.EXIT,
                 self.get_all_positions()
@@ -196,3 +212,21 @@ class Map:
             next_positions.append((row, col + 1))
 
         return next_positions
+
+    def is_move_possible(self, dx, dy):
+        """
+        Checks if a move is possible from the current position
+        :param dx: int
+        :param dy: int
+        :return: bool
+        """
+
+        (row, col) = self.player_position
+        return self.is_in_matrix(row + dx, col + dy) \
+            and (
+                    self.entity_map[row + dx][col + dy] == MapEntity.EMPTY_CELL
+                    or self.entity_map[row + dx][col + dy] == MapEntity.PLAYER
+            )
+
+    def is_in_matrix(self, row, col):
+        return 0 <= row < self.map_size[0] and 0 <= col < self.map_size[1]

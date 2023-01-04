@@ -9,4 +9,4 @@ port = int(os.environ['PORT'])
 buffer_size = int(os.environ['BUFFER_SIZE'])
 
 client = GameClient(host=host, port=port, buffer_size=buffer_size, name='Maze Runner Client')
-client()
+client.run()
