@@ -6,6 +6,33 @@ from lib.map.map_entity import MapEntity
 from lib.map.random_generator import get_random_map
 from lib.tcp.tcp_server import TcpServer
 
+
+def map_request_to_enum(request):
+    """
+    Map request to Request enum
+    :param request:
+    :return: Request enum
+    """
+    match request:
+        case 'START':
+            return Request.START
+        case 'STOP':
+            return Request.STOP
+        case 'UP':
+            return Request.UP
+        case 'DOWN':
+            return Request.DOWN
+        case 'LEFT':
+            return Request.LEFT
+        case 'RIGHT':
+            return Request.RIGHT
+        case 'SEND_PLAYER_DETAILS':
+            return Request.SEND_PLAYER_DETAILS
+        case value:
+            print(colored(f'Unknown request: {value}', 'red'))
+            return Request.UNKNOWN
+
+
 class GameServer(TcpServer):
     """
     Game Server class derived from TcpServer class.
@@ -15,8 +42,8 @@ class GameServer(TcpServer):
     Attributes:
         game_map (Map): game map
     """
-    def __init__(self, host='127.0.0.1', port=8889, buffer_size=1024, name='Game Server'):
-        super().__init__(host, port, buffer_size, name)
+    def __init__(self, host='127.0.0.1', port=8889, buffer_size=1024, max_connections=3, name='Game Server'):
+        super().__init__(host, port, buffer_size, max_connections, name)
         self.game_map = None
 
     def receive_message(self):
@@ -27,24 +54,7 @@ class GameServer(TcpServer):
         request = super().receive_message()
         print(colored(f'Request received from client: {request}', 'blue'))
 
-        match request:
-            case 'START':
-                return Request.START
-            case 'STOP':
-                return Request.STOP
-            case 'UP':
-                return Request.UP
-            case 'DOWN':
-                return Request.DOWN
-            case 'LEFT':
-                return Request.LEFT
-            case 'RIGHT':
-                return Request.RIGHT
-            case 'SEND_PLAYER_DETAILS':
-                return Request.SEND_PLAYER_DETAILS
-            case value:
-                print(colored(f'Unknown request: {value}', 'red'))
-                return Request.UNKNOWN
+        return map_request_to_enum(request)
 
     def send_message(self, message):
         """
