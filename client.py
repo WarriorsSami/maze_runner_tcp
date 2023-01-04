@@ -1,26 +1,12 @@
 import os
-import socket
-from termcolor import colored
 from dotenv import load_dotenv
+from lib.game.client.game_client import GameClient
 
 load_dotenv()
 
 host = os.environ['HOST']
 port = int(os.environ['PORT'])
+buffer_size = int(os.environ['BUFFER_SIZE'])
 
-with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as clientSocket:
-    clientSocket.connect((host, port))
-    print(colored(f'Client is connected to server: {clientSocket.getpeername()}', 'green'))
-
-    message = input('|> ')
-
-    while message.lower().strip() != 'exit':
-        clientSocket.send(message.encode())
-        response = clientSocket.recv(1024).decode()
-
-        print(colored(f'Response: {response}', 'blue'))
-        message = input('|> ')
-
-    clientSocket.send(message.encode())
-    print(colored('Client is closed', 'red'))
-    clientSocket.close()
+client = GameClient(host=host, port=port, buffer_size=buffer_size, name='Maze Runner Client')
+client()
