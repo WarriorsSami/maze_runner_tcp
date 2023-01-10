@@ -1,3 +1,5 @@
+import threading
+
 from termcolor import colored
 from lib.map.map_entity import MapEntity, to_map_entity
 
@@ -43,11 +45,15 @@ class Map:
         return self.player_position, self.map_size
 
     def read_map(self):
+        mutex = threading.Lock()
+
+        mutex.acquire()
         with open(self.map_file_path, 'r') as file:
             map_value = [list(line.strip()) for line in file]
             # convert map to entity map (e.g. ' ' -> MapEntity.EMPTY_CELL) using python's map function
             self.entity_map = list(map(lambda row: list(map(to_map_entity, row)), map_value))
             self.map_size = (len(map_value), len(map_value[0]))
+        mutex.release()
 
     def mark_exit_positions(self):
         for row in range(self.map_size[0]):

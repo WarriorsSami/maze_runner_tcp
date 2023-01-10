@@ -159,3 +159,9 @@ class GameServer(TcpServer):
         # invalid game state reached
         else:
             self.send_message(Response.ERROR)
+
+    def __del__(self):
+        """
+        Destructor for GameServer class
+        """
+        super().__del__()

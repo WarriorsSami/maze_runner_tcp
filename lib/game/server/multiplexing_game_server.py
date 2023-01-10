@@ -155,9 +155,9 @@ class MultiplexingGameServer(GameServer):
 
     def __del__(self):
         # close all client sockets and server socket
+        super().__del__()
         for client_session in self.client_sessions.values():
             client_session[0].close()
-        self.server_socket[0].close()
 
     def dispose_client_session(self, address):
         # remove client session from client_sessions
